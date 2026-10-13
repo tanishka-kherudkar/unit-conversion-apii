@@ -1,96 +1,96 @@
-
 # Unit Conversion API
 
-A RESTful ASP.NET Core Web API for converting numerical values between units of measurement.
+A RESTful ASP.NET Core Web API for converting length, temperature, and weight units.
 
 ## Features
 
-- Length conversions: metres, kilometres, centimetres, millimetres, miles, feet and inches.
-- Temperature conversions: Celsius, Fahrenheit and Kelvin.
-- Weight/mass conversions: kilograms, grams, milligrams, pounds and ounces.
-- Input validation and HTTP 400 error responses.
-- Swagger/OpenAPI documentation.
-- Centralized unit definitions for future extensibility.
+- Length conversions: metres, kilometres, centimetres, millimetres, miles, feet, and inches.
+- Temperature conversions: Celsius, Fahrenheit, and Kelvin.
+- Weight conversions: kilograms, grams, milligrams, pounds, and ounces.
+- Input validation and HTTP 400 error responses for invalid conversions.
+- Swagger UI for interactive API documentation and testing.
+- Automated unit tests using xUnit.
 
 ## Technology Stack
 
 - C#
 - ASP.NET Core Web API
-- .NET 10 LTS
+- .NET 10
 - Swagger / OpenAPI
+- xUnit
 
 ## Prerequisites
 
-- .NET 10 SDK
+Install the .NET 10 SDK.
 
-## Run Locally
+## Run the API
 
-1. Clone the repository:
+Clone the repository:
 
-   ```bash
-   git clone https://github.com/YOUR-USERNAME/unit-conversion-api.git
-   ```
+```bash
+git clone https://github.com/YOUR-USERNAME/unit-conversion-api.git
+cd unit-conversion-api/UnitConversionApi
+```
 
-2. Navigate to the project directory:
+Restore dependencies and build:
 
-   ```bash
-   cd unit-conversion-api/UnitConversionApi
-   ```
+```bash
+dotnet restore
+dotnet build
+```
 
-3. Restore dependencies:
+Run the API:
 
-   ```bash
-   dotnet restore
-   ```
+```bash
+dotnet run
+```
 
-4. Build:
-
-   ```bash
-   dotnet build
-   ```
-
-5. Run:
-
-   ```bash
-   dotnet run --urls http://localhost:5000
-   ```
-
-6. Open Swagger UI:
-
-   http://localhost:5000/swagger
-
-Replace YOUR-USERNAME with your GitHub username.
+Open the Swagger URL shown in the terminal. The default local URL may vary based on the launch configuration.
 
 ## API Endpoints
 
-### Convert a value
+### Convert units
 
-`GET /api/conversions/convert`
+`GET /api/Conversions/convert?value=100&from=m&to=ft`
 
-Parameters: `value`, `from`, `to`
+Example response:
 
-Example:
+```json
+{
+  "originalValue": 100,
+  "fromUnit": "m",
+  "toUnit": "ft",
+  "convertedValue": 328.0833333333333,
+  "category": "length"
+}
+```
 
-`/api/conversions/convert?value=100&from=m&to=ft`
+### Get supported units
 
-### List supported units
+`GET /api/Conversions/units`
 
-`GET /api/conversions/units`
+### Error handling
 
-Returns the supported units and their categories.
+Invalid units, incompatible conversion categories, and temperatures below absolute zero return HTTP 400 Bad Request.
+
+## Run Tests
+
+From the repository root:
+
+```bash
+dotnet test
+```
 
 ## Design Decisions
 
-- Conversion logic is separated from the controller through a service interface.
-- Each unit is defined by its category, conversion factor and optional offset.
-- Values are converted through a canonical base unit.
-- Temperature conversions support offsets.
-- Unsupported units and incompatible categories return HTTP 400 responses.
-- Units are hardcoded for this version; a database-backed catalog could support a larger system.
+- Conversion logic is separated into a service to keep controllers lightweight.
+- Each unit is converted through a common base unit for its category.
+- Temperature conversions use both a factor and an offset.
+- Dependency injection supports maintainability and testability.
+- Invalid inputs are rejected with meaningful error messages.
 
-## Future Improvements
+## Possible Future Improvements
 
-- Automated unit and integration tests.
-- Additional measurement categories.
-- Structured logging and centralized exception handling.
-- GitHub Actions CI pipeline.
+- Add more units and conversion categories.
+- Add integration tests for HTTP endpoints.
+- Improve validation and API versioning.
